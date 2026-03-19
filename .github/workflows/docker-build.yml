@@ -33,6 +33,19 @@ jobs:
             type=semver,pattern={{major}}
             type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-') }}
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Build frontend (stencil-web)
+        working-directory: stencil-web
+        run: npm ci && npm run build
+
+      - name: Build backend (stencil-api-core)
+        working-directory: stencil-api-core
+        run: npm ci && npx prisma generate && npm run build
+
       - name: Build image with Buildah
         id: build
         uses: redhat-actions/buildah-build@v2

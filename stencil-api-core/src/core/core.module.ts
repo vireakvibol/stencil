@@ -5,6 +5,6 @@ import { SysconfigModule } from './modules/sysconfig/sysconfig.module';
 @Module({
   providers: [PrismaService],
   imports: [SysconfigModule],
-  exports: [PrismaService, SysconfigModule]
+  exports: [PrismaService, SysconfigModule],
 })
 export class CoreModule {}

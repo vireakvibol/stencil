@@ -12,7 +12,7 @@ WORKDIR /app/api
 COPY stencil-api-core/package*.json ./
 RUN npm ci && npm cache clean --force
 COPY stencil-api-core/ ./
-RUN npm run build
+RUN npx prisma generate && npm run build
 # Prune node_modules to production only
 RUN npm prune --omit=dev
 

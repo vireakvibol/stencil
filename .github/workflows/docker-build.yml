@@ -10,7 +10,7 @@ permissions:
   packages: write
 
 jobs:
-  build:
+  build-stencil-web:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,13 +26,25 @@ jobs:
         working-directory: stencil-web
         run: npm ci && npm run build
 
+  build-stencil-api-core:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
       - name: Build backend (stencil-api-core)
         working-directory: stencil-api-core
         run: npm ci && npx prisma generate && npm run build
 
-  package:
+  package-stencil-container:
     runs-on: ubuntu-latest
-    needs: build
+    needs: [ build-stencil-web, build-stencil-api-core ]
 
     steps:
       - name: Checkout repository

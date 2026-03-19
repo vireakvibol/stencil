@@ -17,7 +17,7 @@ RUN npx prisma generate && npm run build
 RUN npm prune --omit=dev
 
 # Stage 3: Final image (Runtime with Bun)
-FROM oven/bun:1.1.3-alpine
+FROM oven/bun:1.3.11-alpine
 
 # Set to production environment
 ENV NODE_ENV=production

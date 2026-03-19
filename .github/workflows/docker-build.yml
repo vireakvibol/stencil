@@ -10,8 +10,29 @@ permissions:
   packages: write
 
 jobs:
-  build-and-push:
+  build:
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Build frontend (stencil-web)
+        working-directory: stencil-web
+        run: npm ci && npm run build
+
+      - name: Build backend (stencil-api-core)
+        working-directory: stencil-api-core
+        run: npm ci && npx prisma generate && npm run build
+
+  package:
+    runs-on: ubuntu-latest
+    needs: build
 
     steps:
       - name: Checkout repository
@@ -32,19 +53,6 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
             type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-') }}
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-
-      - name: Build frontend (stencil-web)
-        working-directory: stencil-web
-        run: npm ci && npm run build
-
-      - name: Build backend (stencil-api-core)
-        working-directory: stencil-api-core
-        run: npm ci && npx prisma generate && npm run build
 
       - name: Build image with Buildah
         id: build

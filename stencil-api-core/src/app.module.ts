@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { GraphQLModule } from '@nestjs/graphql';
+import { MercuriusDriver, MercuriusDriverConfig } from '@nestjs/mercurius';
 import { join } from 'path';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppResolver } from './app.resolver';
 import { CoreModule } from './core/core.module';
 import { ConfigModule } from '@nestjs/config';
 
@@ -10,12 +11,15 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'web', 'browser'),
-      exclude: ['/api/v1/(.*)'],
+    }),
+    GraphQLModule.forRoot<MercuriusDriverConfig>({
+      driver: MercuriusDriver,
+      autoSchemaFile: true,
+      graphiql: true,
     }),
     CoreModule,
     ConfigModule.forRoot(),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  providers: [AppResolver],
 })
 export class AppModule {}
